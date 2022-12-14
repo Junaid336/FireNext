@@ -9,19 +9,22 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 
 import Header from '../src/components/Header';
+import Loading from '../src/components/Loading'
  
  const MyApp = ({Component, pageProps}) => {
 
     const [isLogin, setIsLogin] = useState(null);
+    const [loading, setLoading] = useState(true);
     const profilePic = isLogin ? `${addSizeToGoogleProfilePic(auth.currentUser.photoURL)}` : '/images/user.png';
 
     useEffect(()=>{
         onAuthStateChanged(auth, (user)=>{
-            if(user){
+            if(!!user){
                 setIsLogin(true);
             } else {
                 setIsLogin(false);
             }
+            setLoading(false);
         });
     },[])
 
@@ -44,10 +47,11 @@ import Header from '../src/components/Header';
             width: '100vw'
         }}>
             <Container sx={{position: 'relative', height: '100%'}}>
-                 <Component
-                 {...pageProps}
-                 isLogin={isLogin}
-                />
+                {
+                    loading
+                    ? <Loading />
+                    : <Component {...pageProps} isLogin={isLogin} />
+                }
             </Container>
         </Grid>
     </>

@@ -11,26 +11,32 @@ import AddIcon from '@mui/icons-material/Add';
 import Search from './Search'
 import ContactList from './ContactList';
 import NoContent from './NoContent';
+import Loading from './Loading';
 
 const Chats = () => {
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
     const [results, setResults] = useState([]);
     const [filteredResults, setFilteredResults] = useState(results);
     
     useEffect(()=>{
+        setIsLoading(true);
         const load = async () => {
             await loadContacts(setResults);
+            setIsLoading(false);
         }
          load();
+         
     }, []);
 
     useEffect(()=>{
-        setFilteredResults(results)
+        setFilteredResults(results);
     }, [results])
 
     const onSearchTermChange = (searchTerm) => {
-        if(searchTerm !== ''){
-            setFilteredResults(results.filter((result)=>{
+        console.log(searchTerm)
+        if(searchTerm){
+            setFilteredResults(filteredResults.filter((result)=>{
                 return result.lowercaseName.includes(searchTerm.toLowerCase())
             }));
         }else{
@@ -46,12 +52,14 @@ const Chats = () => {
             <>
                 <Search onSearchTermChange={onSearchTermChange} />
                 {
-                    filteredResults.length > 0
-                    ? <ContactList
-                        contacts={filteredResults}
-                        onContactClick={onContactClick}
-                        />
-                    : <NoContent text='No Chats Yet'/>
+                    !isLoading
+                    ?  filteredResults.length > 0
+                        ? <ContactList
+                            contacts={filteredResults}
+                            onContactClick={onContactClick}
+                            />
+                        : <NoContent text='No Chats Yet'/>
+                    : <Loading />
                 }
                 <Fab
                     color="primary" 

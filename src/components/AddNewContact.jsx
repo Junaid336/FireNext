@@ -5,14 +5,18 @@ import { searchUser, createNewChat } from '../Firebase';
 import Search from './Search';
 import ContactList from './ContactList';
 import NoContent from './NoContent';
+import Loading from './Loading';
 
 const AddNewContact = () => {
 
     const router = useRouter();
     const [results, setResults] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const onSearchTermChange = async (searchTerm) => {
-        await searchUser(searchTerm, setResults)
+        setIsLoading(true);
+        await searchUser(searchTerm, setResults);
+        setIsLoading(false);
     }
 
     const onContactClick = async user => {
@@ -25,12 +29,15 @@ const AddNewContact = () => {
         <>
             <Search onSearchTermChange={onSearchTermChange} />
             {
-                results.length > 0
+                !isLoading 
+                ? results.length > 0
                 ? <ContactList
                     contacts={results}
                     onContactClick={onContactClick}
                     />
-                : <NoContent text='No Results' />
+                : <NoContent text='No Results' /> 
+                :<Loading />
+                
             }
         </>
     )

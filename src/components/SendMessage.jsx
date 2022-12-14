@@ -29,6 +29,7 @@ const SendMessage = ({onMessageSend}) => {
           label="type message..."
           value={text}
           fullWidth
+          autoComplete={false}
           onChange={(e)=>setText(e.target.value)}
           InputProps={{
             endAdornment: (
